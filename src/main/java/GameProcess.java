@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class GameProcess {
@@ -5,30 +6,57 @@ public class GameProcess {
     Board board = new Board();
 
     void startGame() {
-        printBoard();
         Scanner scanner = new Scanner(System.in);
+
+        while(true) {
+            playerTurn(scanner);
+            computerTurn();
+        }
+//        scanner.close();
+    }
+
+    private void computerTurn() {
+        System.out.println("Ход компьютера!");
+        Random rand = new Random();
+        int computerMove;
+        while(true){
+            computerMove = rand.nextInt(9)+1;
+            if (isValidMove(board, computerMove)){
+                break;
+            }
+        }
+        placeMove(Integer.toString(computerMove), 'O');
+    }
+
+    private void playerTurn(Scanner scanner){
         System.out.println("Введи куда поставить крестик! (1-9)");
-        playerTurn(scanner);
+        int playerChoice;
+        while(true){
+            playerChoice = scanner.nextInt();
+            if (isValidMove(board, playerChoice)){
+                break;
+            }
+        }
+        placeMove(Integer.toString(playerChoice), 'X');
     }
 
     private void printBoard() {
         System.out.println(board);
     }
 
-    private void playerTurn(Scanner scanner) {
+    private void placeMove(String playerChoice, char symbol) {
         char[][] gameBoard = board.getBoard();
-        String userInput = scanner.nextLine();
-        switch (userInput) {
-            case "1" -> gameBoard[0][0] = 'x';
-            case "2" -> gameBoard[0][1] = 'x';
-            case "3" -> gameBoard[0][2] = 'x';
-            case "4" -> gameBoard[1][0] = 'x';
-            case "5" -> gameBoard[1][1] = 'x';
-            case "6" -> gameBoard[1][2] = 'x';
-            case "7" -> gameBoard[2][0] = 'x';
-            case "8" -> gameBoard[2][1] = 'x';
-            case "9" -> gameBoard[2][2] = 'x';
-            default -> System.out.println(":(");
+        switch (playerChoice) {
+            case "1" -> gameBoard[0][0] = symbol;
+            case "2" -> gameBoard[0][1] = symbol;
+            case "3" -> gameBoard[0][2] = symbol;
+            case "4" -> gameBoard[1][0] = symbol;
+            case "5" -> gameBoard[1][1] = symbol;
+            case "6" -> gameBoard[1][2] = symbol;
+            case "7" -> gameBoard[2][0] = symbol;
+            case "8" -> gameBoard[2][1] = symbol;
+            case "9" -> gameBoard[2][2] = symbol;
+            default -> System.out.println("Ты ввел что-то не то:(");
         }
         board.setBoard(gameBoard);
         printBoard();
