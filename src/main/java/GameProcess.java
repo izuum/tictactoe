@@ -7,7 +7,6 @@ public class GameProcess {
 
     void startGame() {
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
             playerTurn(scanner);
             if (isGameFinished(board.getBoard())) {
@@ -21,29 +20,34 @@ public class GameProcess {
         scanner.close();
     }
 
-    private boolean isGameFinished(char[][] board) {
+    private boolean isGameFinished(char[][] board) { // определяем закончилась ли игра
+        //вызываем метод для определения победителя
         if (findWinner(board, 'X')) {
-            printBoard();
             System.out.println("Player Wins!");
             return true;
         } else if (findWinner(board, 'O')) {
-            printBoard();
             System.out.println("Computer Wins!");
             return true;
         } else {
+            //если победителя нет, то проверяем все ли клетки доски заполнены
             for (int i = 0; i < board.length; i++) {
                 for (int j = 0; j < board[i].length; j++) {
+                    //если не все, то возвращаемся в игру
                     if (board[i][j] == ' ')
                         return false;
                 }
             }
-            System.out.println("Игра закончилась ничьей");
+            //если все клетки заполнены, но победителя нет, то ничья
+            System.out.println("Игра закончилась ничьей!");
             return true;
         }
     }
 
     private boolean findWinner(char[][] board, char symbol) {
-        if ((board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol) ||
+        /*определяем победителя, сравнивая есть ли кейсы когда
+        мы имеем 3 символа "Х" или 3 символа "О" подряд в ряд по вертикали,
+        горизонтали или диагонали*/
+        return (board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol) ||
                 (board[1][0] == symbol && board[1][1] == symbol && board[1][2] == symbol) ||
                 (board[2][0] == symbol && board[2][1] == symbol && board[2][2] == symbol) ||
 
@@ -52,14 +56,13 @@ public class GameProcess {
                 (board[0][2] == symbol && board[1][2] == symbol && board[2][2] == symbol) ||
 
                 (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
-                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
-            return true;
-        } else {
-            return false;
-        }
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol);
     }
 
     private void computerTurn() {
+        /* Компьютер ходит благодаря случайному выбору клетки.
+           Ход проверяется на валидность (введена ли цифра, попадает ли она
+           в диапазон нужных значений, свободна ли клетка в которую компьютер хочет поставить "О") */
         System.out.println("Ход компьютера!");
         Random rand = new Random();
         String computerMove;
@@ -73,6 +76,8 @@ public class GameProcess {
     }
 
     private void playerTurn(Scanner scanner) {
+        /* ход игрока проверяется на валидность (введена ли цифра, попадает ли она
+           в диапазон нужных значений, свободна ли клетка в которую игрок хочет поставить "Х") */
         String playerChoice;
         while (true) {
             System.out.println("Введи куда поставить крестик! (1-9)");
@@ -87,11 +92,12 @@ public class GameProcess {
         placeMove(playerChoice, 'X');
     }
 
-    private void printBoard() {
+    private void printBoard() { //метод печатает доску
         System.out.println(board);
     }
 
     private void placeMove(String playerChoice, char symbol) {
+        // совершаем ход путем помещения значения "Х" или "О" в выбранную клетку
         char[][] gameBoard = board.getBoard();
         switch (playerChoice) {
             case "1" -> gameBoard[0][0] = symbol;
@@ -109,10 +115,12 @@ public class GameProcess {
         printBoard();
     }
 
-    private boolean isValidMove(Board board, String position) {
+    private boolean isValidMove(Board board, String position) { //проверяем валидность хода
         char[][] gameBoard = board.getBoard();
-        if (isDigit(position)) {
+        if (isDigit(position)) { //проверяем введено ли число
+            //проверяем, входит ли число в диапазон значение от 1 до 9
             if (0 < Integer.parseInt(position) && Integer.parseInt(position) < 10) {
+                //проверяем свободна ли клетка куда игрок/компьютер хочет поставить символ
                 return switch (position) {
                     case "1" -> (gameBoard[0][0] == ' ');
                     case "2" -> (gameBoard[0][1] == ' ');
@@ -133,7 +141,7 @@ public class GameProcess {
         }
     }
 
-    private boolean isDigit(String position) {
+    private boolean isDigit(String position) { //проверка введена ли цифра
         try {
             int digit = Integer.parseInt(position);
             return true;
@@ -141,5 +149,4 @@ public class GameProcess {
             return false;
         }
     }
-
 }
