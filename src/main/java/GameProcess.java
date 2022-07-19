@@ -8,11 +8,56 @@ public class GameProcess {
     void startGame() {
         Scanner scanner = new Scanner(System.in);
 
-        while(true) {
+        while(true){
             playerTurn(scanner);
+            if(isGameFinished(board.getBoard())){
+                break;
+            }
             computerTurn();
+            if(isGameFinished(board.getBoard())){
+                break;
+            }
         }
+
 //        scanner.close();
+    }
+
+    private boolean isGameFinished(char[][] board) {
+        if(findWinner(board, 'X')){
+            printBoard();
+            System.out.println("Player Wins!");
+            return true;
+        }else if(findWinner(board, 'O')){
+            printBoard();
+            System.out.println("Computer Wins!");
+            return true;
+        }else {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[i].length; j++) {
+                    if (board[i][j] == ' ')
+                        return false;
+                }
+            }
+            System.out.println("Игра закончилась ничьей");
+            return true;
+        }
+    }
+
+    private boolean findWinner(char[][] board, char symbol) {
+        if((board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol) ||
+                (board[1][0] == symbol && board[1][1] == symbol && board[1][2] == symbol) ||
+                (board[2][0] == symbol && board[2][1] == symbol && board[2][2] == symbol) ||
+
+                (board[0][0] == symbol && board[1][0] == symbol && board[2][0] == symbol) ||
+                (board[0][1] == symbol && board[1][1] == symbol && board[2][1] == symbol) ||
+                (board[0][2] == symbol && board[1][2] == symbol && board[2][2] == symbol) ||
+
+                (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void computerTurn() {
@@ -35,6 +80,9 @@ public class GameProcess {
             playerChoice = scanner.nextInt();
             if (isValidMove(board, playerChoice)){
                 break;
+            }else{
+                System.out.println("Эта клетка уже занята, попробуй другую!");
+                printBoard();
             }
         }
         placeMove(Integer.toString(playerChoice), 'X');
@@ -64,18 +112,23 @@ public class GameProcess {
 
     private boolean isValidMove(Board board, int position) {
         char[][] gameBoard = board.getBoard();
-        return switch (position) {
-            case 1 -> (gameBoard[0][0] == ' ');
-            case 2 -> (gameBoard[0][1] == ' ');
-            case 3 -> (gameBoard[0][2] == ' ');
-            case 4 -> (gameBoard[1][0] == ' ');
-            case 5 -> (gameBoard[1][1] == ' ');
-            case 6 -> (gameBoard[1][2] == ' ');
-            case 7 -> (gameBoard[2][0] == ' ');
-            case 8 -> (gameBoard[2][1] == ' ');
-            case 9 -> (gameBoard[2][2] == ' ');
-            default -> false;
-        };
+        if(0<position && position<10) {
+            return switch (position) {
+                case 1 -> (gameBoard[0][0] == ' ');
+                case 2 -> (gameBoard[0][1] == ' ');
+                case 3 -> (gameBoard[0][2] == ' ');
+                case 4 -> (gameBoard[1][0] == ' ');
+                case 5 -> (gameBoard[1][1] == ' ');
+                case 6 -> (gameBoard[1][2] == ' ');
+                case 7 -> (gameBoard[2][0] == ' ');
+                case 8 -> (gameBoard[2][1] == ' ');
+                case 9 -> (gameBoard[2][2] == ' ');
+                default -> false;
+            };
+        }else{
+            System.out.println("Ты ввел что-то не то!");
+            return false;
+        }
     }
 
 }
