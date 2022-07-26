@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class GameProcess {
 
-    Board board = new Board();
+    private Board board = new Board();
 
     void startGame() {
         Scanner scanner = new Scanner(System.in);
@@ -61,8 +61,7 @@ public class GameProcess {
 
     private void computerTurn() {
         /* Компьютер ходит благодаря случайному выбору клетки.
-           Ход проверяется на валидность (введена ли цифра, попадает ли она
-           в диапазон нужных значений, свободна ли клетка в которую компьютер хочет поставить "О") */
+           Ход проверяется на валидность */
         System.out.println("Ход компьютера!");
         Random rand = new Random();
         String computerMove;
@@ -76,20 +75,22 @@ public class GameProcess {
     }
 
     private void playerTurn(Scanner scanner) {
-        /* ход игрока проверяется на валидность (введена ли цифра, попадает ли она
-           в диапазон нужных значений, свободна ли клетка в которую игрок хочет поставить "Х") */
-        String playerChoice;
+        /* право хода предоставляется игроку
+         * ход игрока проверяется на валидность
+         * выполняется ход
+         */
+        String position;
         while (true) {
-            System.out.println("Введи куда поставить крестик! (1-9)");
-            playerChoice = scanner.nextLine();
-            if (isValidMove(board, playerChoice)) {
+            System.out.println("Введи цифру от 1 до 9!");
+            position = scanner.nextLine();
+            if (isValidMove(board, position)) {
                 break;
             } else {
-                System.out.println(playerChoice + " это недопустимый ход!");
+                System.out.println(position + " это недопустимый ход!");
                 printBoard();
             }
         }
-        placeMove(playerChoice, 'X');
+        placeMove(position, 'X');
     }
 
     private void printBoard() { //метод печатает доску
@@ -117,36 +118,37 @@ public class GameProcess {
 
     private boolean isValidMove(Board board, String position) { //проверяем валидность хода
         char[][] gameBoard = board.getBoard();
-        if (isDigit(position)) { //проверяем введено ли число
-            //проверяем, входит ли число в диапазон значение от 1 до 9
-            if (0 < Integer.parseInt(position) && Integer.parseInt(position) < 10) {
-                //проверяем свободна ли клетка куда игрок/компьютер хочет поставить символ
-                return switch (position) {
-                    case "1" -> (gameBoard[0][0] == ' ');
-                    case "2" -> (gameBoard[0][1] == ' ');
-                    case "3" -> (gameBoard[0][2] == ' ');
-                    case "4" -> (gameBoard[1][0] == ' ');
-                    case "5" -> (gameBoard[1][1] == ' ');
-                    case "6" -> (gameBoard[1][2] == ' ');
-                    case "7" -> (gameBoard[2][0] == ' ');
-                    case "8" -> (gameBoard[2][1] == ' ');
-                    case "9" -> (gameBoard[2][2] == ' ');
-                    default -> false;
-                };
-            } else {
-                return false;
-            }
-        }else{
+        if (isValidNum(position)) { //проверяем введено ли корректное число
+            //проверяем свободна ли клетка куда игрок/компьютер хочет поставить символ
+            return switch (position) {
+                case "1" -> (gameBoard[0][0] == ' ');
+                case "2" -> (gameBoard[0][1] == ' ');
+                case "3" -> (gameBoard[0][2] == ' ');
+                case "4" -> (gameBoard[1][0] == ' ');
+                case "5" -> (gameBoard[1][1] == ' ');
+                case "6" -> (gameBoard[1][2] == ' ');
+                case "7" -> (gameBoard[2][0] == ' ');
+                case "8" -> (gameBoard[2][1] == ' ');
+                case "9" -> (gameBoard[2][2] == ' ');
+                default -> false;
+            };
+        } else {
             return false;
         }
     }
 
-    private boolean isDigit(String position) { //проверка введена ли цифра
-        try {
-            int digit = Integer.parseInt(position);
-            return true;
-        } catch (NumberFormatException e) {
+    private boolean isValidNum(String position) {
+        /* проверка что введена не пустая строка
+         * проверка корректности введенной цифры
+         * проверяется введена ли цифра и соответствует ли она значению от 1 до 9
+         */
+        if((position.trim().length() == 0)){
             return false;
         }
+        if(!position.chars().allMatch(Character::isDigit)){
+                return false;
+            }
+        double number = Double.parseDouble(position);
+        return 1 <= number && number <= 10;
     }
 }
