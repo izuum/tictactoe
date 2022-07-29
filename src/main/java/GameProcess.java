@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class GameProcess {
 
-    private Board board = new Board();
+    private Board board = Board.getInstace();
 
     void startGame() {
         Scanner scanner = new Scanner(System.in);
